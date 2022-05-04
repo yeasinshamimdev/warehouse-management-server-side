@@ -20,8 +20,9 @@ async function run() {
 
         app.get('/products', async (req, res) => {
             const query = {};
-            const cursor = await sportsCollection.find(query).toArray();
-            res.send(cursor);
+            const cursor = sportsCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
         });
 
         // user items
@@ -29,7 +30,14 @@ async function run() {
             const doc = req.body;
             const result = await userItemsCollection.insertOne(doc);
             res.send(result);
-        })
+        });
+
+        app.get('/userItems', async (req, res) => {
+            const query = {};
+            const cursor = userItemsCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        });
 
         // delete 
         app.delete('/products/:id', async (req, res) => {
