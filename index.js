@@ -16,12 +16,20 @@ async function run() {
     try {
         await client.connect();
         const sportsCollection = client.db("sports-gear-warehouse").collection("sports-items");
+        const userItemsCollection = client.db("sports-gear-warehouse").collection("userItems");
 
         app.get('/products', async (req, res) => {
             const query = {};
             const cursor = await sportsCollection.find(query).toArray();
             res.send(cursor);
         });
+
+        // user items
+        app.post('/userItems', async (req, res) => {
+            const doc = req.body;
+            const result = await userItemsCollection.insertOne(doc);
+            res.send(result);
+        })
 
         // delete 
         app.delete('/products/:id', async (req, res) => {
