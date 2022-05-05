@@ -16,7 +16,6 @@ async function run() {
     try {
         await client.connect();
         const sportsCollection = client.db("sports-gear-warehouse").collection("sports-items");
-        const userItemsCollection = client.db("sports-gear-warehouse").collection("userItems");
 
         app.get('/products', async (req, res) => {
             const query = {};
@@ -25,19 +24,36 @@ async function run() {
             res.send(result);
         });
 
-        // user items
-        app.post('/userItems', async (req, res) => {
-            const doc = req.body;
-            const result = await userItemsCollection.insertOne(doc);
+        // find one 
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await sportsCollection.findOne(query);
             res.send(result);
         });
 
-        app.get('/userItems', async (req, res) => {
-            const query = {};
-            const cursor = userItemsCollection.find(query);
-            const result = await cursor.toArray();
+        // user items
+        app.post('/products', async (req, res) => {
+            const doc = req.body;
+            const result = await sportsCollection.insertOne(doc);
             res.send(result);
         });
+
+
+        // update
+        app.put('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedData = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    quantity: updatedData
+                }
+            }
+            const result = await sportsCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
 
         // delete 
         app.delete('/products/:id', async (req, res) => {
