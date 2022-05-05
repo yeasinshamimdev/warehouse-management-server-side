@@ -16,6 +16,7 @@ async function run() {
     try {
         await client.connect();
         const sportsCollection = client.db("sports-gear-warehouse").collection("sports-items");
+        const reviewCollection = client.db("sports-gear-warehouse").collection("reviews");
 
         app.get('/products', async (req, res) => {
             const query = {};
@@ -23,6 +24,14 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         });
+
+        // get review
+        app.get('/reviews', async (req, res) => {
+            const query = {};
+            const cursor = reviewCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
         // find one 
         app.get('/products/:id', async (req, res) => {
