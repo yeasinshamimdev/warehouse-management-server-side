@@ -44,11 +44,12 @@ async function run() {
         app.put('/products/:id', async (req, res) => {
             const id = req.params.id;
             const updatedData = req.body;
+            console.log(updatedData);
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updatedDoc = {
                 $set: {
-                    quantity: updatedData
+                    quantity: updatedData.newQuantity
                 }
             }
             const result = await sportsCollection.updateOne(filter, updatedDoc, options);
