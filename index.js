@@ -46,7 +46,7 @@ async function run() {
             res.send({ token })
         })
 
-        app.get('products', async (req, res) => {
+        app.get('/products', async (req, res) => {
             const query = {};
             const cursor = sportsCollection.find(query);
             const result = await cursor.toArray();
