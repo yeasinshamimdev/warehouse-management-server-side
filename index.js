@@ -35,7 +35,6 @@ async function run() {
         await client.connect();
         const sportsCollection = client.db("sports-gear-warehouse").collection("sports-items");
         const reviewCollection = client.db("sports-gear-warehouse").collection("reviews");
-        const userItemsCollection = client.db("sports-gear-warehouse").collection("userItems");
 
         // jwt token 
         app.post('/login', async (req, res) => {
@@ -47,14 +46,20 @@ async function run() {
             res.send({ token })
         })
 
+        app.get('products', async (req, res) => {
+            const query = {};
+            const cursor = sportsCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
-        app.get('/userItems', verifyJWT, async (req, res) => {
+        app.get('/myItems', verifyJWT, async (req, res) => {
             const decodedEmail = req.decoded.email;
             const email = req.query.email;
 
             if (email === decodedEmail) {
                 const query = { email: email };
-                const cursor = userItemsCollection.find(query);
+                const cursor = sportsCollection.find(query);
                 const result = await cursor.toArray();
                 res.send(result);
             }
@@ -62,13 +67,6 @@ async function run() {
                 res.status(403).send({ message: 'Forbidden access' });
             }
         });
-
-        app.get('/products', async (req, res) => {
-            const query = {};
-            const cursor = sportsCollection.find(query);
-            const result = await cursor.toArray();
-            res.send(result);
-        })
 
         // get review
         app.get('/reviews', async (req, res) => {
@@ -87,9 +85,9 @@ async function run() {
         });
 
         // user items
-        app.post('/userItems', async (req, res) => {
+        app.post('/products', async (req, res) => {
             const doc = req.body;
-            const result = await userItemsCollection.insertOne(doc);
+            const result = await sportsCollection.insertOne(doc);
             res.send(result);
         });
 
