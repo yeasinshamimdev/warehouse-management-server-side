@@ -53,6 +53,7 @@ async function run() {
             res.send(result);
         })
 
+        // api for my items menu
         app.get('/myItems', verifyJWT, async (req, res) => {
             const decodedEmail = req.decoded.email;
             const email = req.query.email;
